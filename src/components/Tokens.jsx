@@ -44,14 +44,16 @@ const Home = ({ contractAddress, account, contract }) => {
   return (
     <>
       <div className="container">
-        <h4 className="my-4 pt-5">Account: {account}</h4>
-        <h4 className="my-4"> Tokens Available : {balance / 10 ** 18}</h4>
-        <strong className="text-danger">
-          Import your tokens to MetaMask using: {contractAddress}
-        </strong>
-        <button className="btn btn-primary my-4" onClick={checkBalance}>
-          Get Updated Balance
-        </button>
+        <div className="d-flex flex-column">
+          <h4 className="my-4 pt-5">Account: {account}</h4>
+          <h4 className="my-4"> Tokens Available : {balance / 10 ** 18}</h4>
+          <strong className="text-danger">
+            Import your tokens to MetaMask using: {contractAddress}
+          </strong>
+          <button className="btn btn-primary my-4 w-25" onClick={checkBalance}>
+            Get Updated Balance
+          </button>
+        </div>
 
         <div className="container my-5 border border-dark p-5 d-flex flex-column w-50">
           <h3>Register:</h3>

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 
 const Funds = ({ contractAddress, account, contract }) => {
   const [funds, setFunds] = useState(0);
-  const [depositeInput, setDepositeInput] = useState("");
-  const [withdrawInput, setWithdrawInput] = useState("");
+  const [depositeInput, setDepositeInput] = useState();
+  const [withdrawInput, setWithdrawInput] = useState();
 
   const handleDeposite = (e) => {
     e.preventDefault();
@@ -24,16 +24,43 @@ const Funds = ({ contractAddress, account, contract }) => {
   };
 
   const deposite = async () => {
-    alert(`deposite ${depositeInput}`);
+    try {
+      const tx = await contract.deposite(depositeInput);
+      tx.wait();
+      console.log("Funds added successfully");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const withdraw = async () => {
-    alert(`deposite ${withdrawInput}`);
+    try {
+      const tx = await contract.withdraw(withdrawInput);
+      tx.wait();
+      console.log("Funds Withdrawen successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getFunds = async () => {
+    try {
+      let bal = await contract.checkFunds();
+      setFunds(parseInt(bal._hex));
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="container m-5 p-5 d-flex flex-column">
+      <p>
+        Funds Won't work yet, as we don't have enough ether to deposite and
+        withdraw (also HardHat won't work as it it not the native token)
+      </p>
       <h3 className="mx-5">Available funds: {funds}</h3>
-      <button className="btn btn-primary w-25 my-4 mx-5">Refresh</button>
+      <button className="btn btn-primary w-25 my-4 mx-5" onClick={getFunds}>
+        Refresh
+      </button>
       <div className="d-flex">
         <div className="m-5 w-50 d-flex flex-column">
           <input
