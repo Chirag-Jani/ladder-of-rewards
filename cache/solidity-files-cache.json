@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "E:\\Web3.0\\The Ladder of Rewards\\client\\contracts\\LOR.sol": {
-      "lastModificationDate": 1674110154492,
-      "contentHash": "cee10ff1b223b5383233fd0b1dac042b",
+      "lastModificationDate": 1674112606368,
+      "contentHash": "6b5f6bb2308ad3159a38baa09664f2ce",
       "sourceName": "contracts/LOR.sol",
       "solcConfig": {
         "version": "0.8.17",

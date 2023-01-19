@@ -27,7 +27,8 @@ const Funds = ({ contractAddress, account, contract }) => {
     try {
       const tx = await contract.deposite(depositeInput);
       tx.wait();
-      console.log("Funds added successfully");
+      alert("Funds added successfully");
+      setDepositeInput(0);
     } catch (error) {
       console.log(error);
     }
@@ -37,7 +38,8 @@ const Funds = ({ contractAddress, account, contract }) => {
     try {
       const tx = await contract.withdraw(withdrawInput);
       tx.wait();
-      console.log("Funds Withdrawen successfully");
+      alert("Funds Withdrawen successfully");
+      setWithdrawInput(0);
     } catch (error) {
       console.log(error);
     }
@@ -53,11 +55,7 @@ const Funds = ({ contractAddress, account, contract }) => {
   };
   return (
     <div className="container m-5 p-5 d-flex flex-column">
-      <p>
-        Funds Won't work yet, as we don't have enough ether to deposite and
-        withdraw (also HardHat won't work as it it not the native token)
-      </p>
-      <h3 className="mx-5">Available funds: {funds}</h3>
+      <h3 className="mx-5">Available funds: {funds / 10 ** 18}</h3>
       <button className="btn btn-primary w-25 my-4 mx-5" onClick={getFunds}>
         Refresh
       </button>
@@ -83,7 +81,7 @@ const Funds = ({ contractAddress, account, contract }) => {
             value={withdrawInput}
           />
           <button className="btn btn-danger my-2" onClick={withdraw}>
-            Deposite
+            Withdraw
           </button>
         </div>
       </div>

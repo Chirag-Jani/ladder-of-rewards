@@ -13,7 +13,7 @@ const Home = ({ contractAddress, account, contract }) => {
   // to get the balance
   const checkBalance = async () => {
     try {
-      let bal = await contract.getBalance(account);
+      let bal = await contract.getBalance();
       setBalance(parseInt(bal._hex));
     } catch (error) {
       console.log(error);
@@ -36,6 +36,12 @@ const Home = ({ contractAddress, account, contract }) => {
 
       // waiting to get executed
       await reg.wait();
+
+      // resetting input
+      setRegInfo({
+        rBy: "",
+        rCode: "",
+      });
     } catch (error) {
       console.log(error);
     }

@@ -17,7 +17,9 @@ contract Ladder is ERC20 {
     mapping(string => bool) codeExist;
     mapping(string => User) getUserByCode;
     mapping(uint256 => uint256) levelReward;
+
     mapping(address => uint256) userFunds;
+    mapping(address => uint256) depositedFunds;
 
     constructor() ERC20("UniQual iTech", "UQ") {
         levelReward[1] = (signupBonus * 15) / 100;
@@ -37,6 +39,7 @@ contract Ladder is ERC20 {
 
         _mint(msg.sender, signupBonus * 10**18);
         emit InitialReward(msg.sender, signupBonus);
+        userFunds[msg.sender] = signupBonus * 10**18;
 
         userExist[msg.sender] = true;
 
@@ -55,6 +58,7 @@ contract Ladder is ERC20 {
                 // reward based on level
                 if (refferer.userAddress != address(0)) {
                     _mint(refferer.userAddress, levelReward[i] * 10**18);
+                    userFunds[refferer.userAddress] += levelReward[i] * 10**18;
                     emit ReferalReward(
                         msg.sender,
                         refferer.userAddress,
@@ -69,36 +73,41 @@ contract Ladder is ERC20 {
     }
 
     // to get the balance of the user
-    function getBalance(address addr) public view returns (uint256) {
-        return balanceOf(addr);
+    function getBalance() public view returns (uint256) {
+        return userFunds[msg.sender];
     }
 
     // deposite fundss
     function deposite(uint256 _amount) public payable {
-        (bool sent, ) = msg.sender.call{value: _amount}("");
-        require(sent, "Fund transfer error");
+        // (bool sent, ) = msg.sender.call{value: _amount}("");
+        // require(sent, "Fund transfer error");
+
+        _transfer(msg.sender, address(this), _amount * 10**18);
 
         // setting funds
-        userFunds[msg.sender] += _amount;
+        depositedFunds[msg.sender] += _amount * 10**18;
+        userFunds[msg.sender] -= _amount * 10**18;
     }
 
     // withdraw funds
     function withdraw(uint256 _amount) public payable {
         // not more than deposited
-        require(userFunds[msg.sender] > _amount, "Not enough funds");
+        require(depositedFunds[msg.sender] >= _amount, "Not enough funds");
 
-        uint256 toTransfer = _amount * 10**18;
+        // uint256 toTransfer = _amount * 10**18;
+        // (bool sent, ) = msg.sender.call{value: toTransfer}("");
+        // require(sent, "Fund transfer error");
 
-        (bool sent, ) = msg.sender.call{value: toTransfer}("");
-        require(sent, "Fund transfer error");
+        _transfer(address(this), msg.sender, _amount * 10**18);
 
         // setting funds
-        userFunds[msg.sender] -= _amount;
+        depositedFunds[msg.sender] -= _amount * 10**18;
+        userFunds[msg.sender] += _amount * 10**18;
     }
 
     // check funds
     function checkFunds() public view returns (uint256) {
-        return userFunds[msg.sender];
+        return depositedFunds[msg.sender];
     }
 
     event InitialReward(address indexed user, uint256 indexed reward);
