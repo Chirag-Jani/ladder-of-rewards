@@ -3,8 +3,6 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Ladder is ERC20 {
-    // handle funds
-
     uint256 public signupBonus = 100;
 
     struct User {
@@ -19,6 +17,7 @@ contract Ladder is ERC20 {
     mapping(string => bool) codeExist;
     mapping(string => User) getUserByCode;
     mapping(uint256 => uint256) levelReward;
+    mapping(address => uint256) userFunds;
 
     constructor() ERC20("UniQual iTech", "UQ") {
         levelReward[1] = (signupBonus * 15) / 100;
@@ -72,6 +71,34 @@ contract Ladder is ERC20 {
     // to get the balance of the user
     function getBalance(address addr) public view returns (uint256) {
         return balanceOf(addr);
+    }
+
+    // deposite fundss
+    function deposite(uint256 _amount) public payable {
+        (bool sent, ) = msg.sender.call{value: _amount}("");
+        require(sent, "Fund transfer error");
+
+        // setting funds
+        userFunds[msg.sender] += _amount;
+    }
+
+    // withdraw funds
+    function withdraw(uint256 _amount) public payable {
+        // not more than deposited
+        require(userFunds[msg.sender] > _amount, "Not enough funds");
+
+        uint256 toTransfer = _amount * 10**18;
+
+        (bool sent, ) = msg.sender.call{value: toTransfer}("");
+        require(sent, "Fund transfer error");
+
+        // setting funds
+        userFunds[msg.sender] -= _amount;
+    }
+
+    // check funds
+    function checkFunds() public view returns (uint256) {
+        return userFunds[msg.sender];
     }
 
     event InitialReward(address indexed user, uint256 indexed reward);
